@@ -58,35 +58,39 @@ def do_connect():
 
 def handle_btns(btnType):
     print ("handlebtn:"+str(btnType))  ## DEBUG
+    r = None
 
     ## random color on each press to know something is happening
     np[0] = (urandom.getrandbits(8), urandom.getrandbits(8),urandom.getrandbits(8))
     np.write()
 
-    if btnType == PLAY_PAUSE:
-        status = urequests.post(url, data=json.dumps(status_t)).json()
-        mode = status['result']['mode']
-        if (mode == 'pause'):
-            urequests.post(url, data=json.dumps(playpause_t))
-        elif (mode == 'play'):
-            urequests.post(url, data=json.dumps(playpause_t))
-        elif (mode == 'stop'):
-            urequests.post(url, data=json.dumps(play_t))
-        else:
-            urequests.post(url, data=json.dumps(play_t))
-    elif btnType == STOP:
-        urequests.post(url, data=json.dumps(stop_t))
-    elif btnType == VOL_UP:
-        urequests.post(url, data=json.dumps(volup_t))
-    elif btnType == VOL_DN:
-        urequests.post(url, data=json.dumps(voldn_t))
-    elif btnType == NEXT_SONG:
-        urequests.post(url, data=json.dumps(nextsong_t))
-    elif btnType == PREV_SONG:
-        urequests.post(url, data=json.dumps(prevsong_t))
-    else:
-        pass
-    gc.collect()
+     if btnType == PLAY_PAUSE:
+        status = urequests.post(url, data=json.dumps(status_t))
+        mode = status.json()['result']['mode']
+        status.close()
+         if (mode == 'pause'):
+            r = urequests.post(url, data=json.dumps(playpause_t))
+         elif (mode == 'play'):
+            r = urequests.post(url, data=json.dumps(playpause_t))
+         elif (mode == 'stop'):
+            r = urequests.post(url, data=json.dumps(play_t))
+         else:
+            r = urequests.post(url, data=json.dumps(play_t))
+     elif btnType == STOP:
+        r = urequests.post(url, data=json.dumps(stop_t))
+     elif btnType == VOL_UP:
+        r = urequests.post(url, data=json.dumps(volup_t))
+     elif btnType == VOL_DN:
+        r = urequests.post(url, data=json.dumps(voldn_t))
+     elif btnType == NEXT_SONG:
+        r = urequests.post(url, data=json.dumps(nextsong_t))
+     elif btnType == PREV_SONG:
+        r = urequests.post(url, data=json.dumps(prevsong_t))
+     else:
+         pass
+    if (r):
+        r.close()
+    #gc.collect()  ## don't need this now that we close the request above
 
 
 ## Setup Button TODO: make sure to use the pin of your choice
